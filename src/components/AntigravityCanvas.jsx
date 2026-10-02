@@ -25,7 +25,7 @@ export default function AntigravityCanvas() {
     ];
 
     let particles = [];
-    let lastMousePos = { x: -1000, y: -1000 };
+    let lastPos = { x: -1000, y: -1000 };
 
     const handleResize = () => {
       if (!canvas) return;
@@ -35,7 +35,7 @@ export default function AntigravityCanvas() {
 
     class MouseParticle {
       constructor(x, y) {
-        // Random offset around cursor position
+        // Random offset around cursor / touch point
         this.x = x + (Math.random() - 0.5) * 16;
         this.y = y + (Math.random() - 0.5) * 16;
         this.size = Math.random() * 3 + 1.5;
@@ -76,7 +76,6 @@ export default function AntigravityCanvas() {
     }
 
     const spawnParticles = (x, y, count = 3) => {
-      // Prevent exceeding memory bounds
       if (particles.length >= 250) return;
       for (let i = 0; i < count; i++) {
         particles.push(new MouseParticle(x, y));
@@ -87,24 +86,29 @@ export default function AntigravityCanvas() {
       const currentX = e.clientX;
       const currentY = e.clientY;
 
-      // Distance calculation to spawn proportionally to speed
-      const dist = Math.hypot(currentX - lastMousePos.x, currentY - lastMousePos.y);
+      const dist = Math.hypot(currentX - lastPos.x, currentY - lastPos.y);
       const spawnCount = Math.min(6, Math.max(2, Math.floor(dist / 10)));
       spawnParticles(currentX, currentY, spawnCount);
 
-      lastMousePos = { x: currentX, y: currentY };
+      lastPos = { x: currentX, y: currentY };
     };
 
-    const handleTouchMove = (e) => {
+    const handleTouch = (e) => {
       if (e.touches && e.touches.length > 0) {
-        const touch = e.touches[0];
-        spawnParticles(touch.clientX, touch.clientY, 3);
+        for (let i = 0; i < Math.min(e.touches.length, 3); i++) {
+          const touch = e.touches[i];
+          const dist = Math.hypot(touch.clientX - lastPos.x, touch.clientY - lastPos.y);
+          const count = Math.min(5, Math.max(2, Math.floor(dist / 12)));
+          spawnParticles(touch.clientX, touch.clientY, count);
+        }
+        lastPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
     };
 
     window.addEventListener('resize', handleResize, { passive: true });
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchstart', handleTouch, { passive: true });
+    window.addEventListener('touchmove', handleTouch, { passive: true });
 
     // Connect close particles with subtle glowing lines
     const connectParticles = () => {
@@ -137,10 +141,8 @@ export default function AntigravityCanvas() {
 
     // Continuous Animation Loop
     const animate = () => {
-      // Clear canvas every frame
       ctx.clearRect(0, 0, width, height);
 
-      // Only perform drawing calculations if there are active particles
       if (particles.length > 0) {
         connectParticles();
 
@@ -155,17 +157,16 @@ export default function AntigravityCanvas() {
         }
       }
 
-      // Always request next frame to keep loop permanently active and ready for mouse movement
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Start loop
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouch);
+      window.removeEventListener('touchmove', handleTouch);
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
@@ -175,7 +176,7 @@ export default function AntigravityCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 bg-[#050811]"
+      className="fixed inset-0 pointer-events-none z-0 bg-[#050811] touch-none"
       style={{ width: '100vw', height: '100vh' }}
     />
   );

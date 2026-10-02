@@ -373,7 +373,6 @@ const INITIAL_RULES = [
    MAIN ADAPTIVESHIELD REACT APPLICATION
    ========================================================================== */
 export default function App() {
-  // Navigation tabs
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'attacklab' | 'live' | 'rules' | 'docs'
 
   // Pipeline Rules State
@@ -419,29 +418,11 @@ export default function App() {
     { time: '00:25', allowed: 35, blocked: 9, threatScore: 60 },
   ]);
 
-  // System Health Metrics
-  const [systemLoad, setSystemLoad] = useState(24);
-  const [engineLatency, setEngineLatency] = useState(0.38);
-
-  // Live Alerts Feed
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: 'AdaptiveShield 5-Stage Core active with Antigravity Canvas Engine.', type: 'info', time: 'Just now' }
-  ]);
-
   const rulesRef = useRef(rules);
   rulesRef.current = rules;
 
   const handleAutoBan = (ip, score) => {
     setStats(prev => ({ ...prev, autoBans: prev.autoBans + 1 }));
-    setNotifications(prev => [
-      {
-        id: Date.now(),
-        text: `🚨 Dynamic IPS Auto-Ban: IP [${ip}] quarantined! Accum. Threat Index: ${score}`,
-        type: 'alert',
-        time: new Date().toLocaleTimeString()
-      },
-      ...prev.slice(0, 8)
-    ]);
   };
 
   const pipeline = useMemo(() => {
@@ -501,10 +482,7 @@ export default function App() {
   }, [isStreaming, streamSpeed]);
 
   const processIncomingPacket = (packet) => {
-    const startTime = performance.now();
     const decision = pipeline.process(packet);
-    const latency = ((performance.now() - startTime) + Math.random() * 0.12).toFixed(2);
-    setEngineLatency(latency);
 
     if (decision.allowed) {
       setDataAccessPulse(true);
@@ -523,11 +501,6 @@ export default function App() {
     }));
 
     setPackets(prev => [decision, ...prev.slice(0, 99)]);
-
-    setSystemLoad(prev => {
-      const jitter = Math.floor(Math.random() * 5) - 2;
-      return Math.min(95, Math.max(15, prev + jitter));
-    });
   };
 
   useEffect(() => {
@@ -641,226 +614,183 @@ export default function App() {
     return true;
   });
 
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div className="relative min-h-screen text-slate-100 flex flex-col font-['Inter',sans-serif] selection:bg-blue-600 selection:text-white">
-      {/* 1. ANTIGRAVITY INTERACTIVE PARTICLE CANVAS BACKGROUND */}
+      {/* 1. ANTIGRAVITY TOUCH/MOUSE CANVAS BACKGROUND */}
       <AntigravityCanvas />
 
       {/* 2. TOP NAVIGATION HEADER */}
-      <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 shadow-2xl">
-        <div className="flex items-center gap-3.5">
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-sky-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20 ring-1 ring-blue-400/40">
-            <Shield className="w-5 h-5 text-white" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-400 ring-2 ring-[#050811] animate-ping"></span>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-sky-200 to-blue-400 bg-clip-text text-transparent">
-                AdaptiveShield
-              </h1>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-blue-950/90 border border-blue-500/40 text-blue-300 font-semibold tracking-wider">
-                IPS 5.2
-              </span>
+      <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 px-4 sm:px-6 lg:px-12 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 shadow-2xl">
+        <div className="flex items-center justify-between w-full sm:w-auto gap-3">
+          <div className="flex items-center gap-3">
+            <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-sky-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20 ring-1 ring-blue-400/40">
+              <Shield className="w-5 h-5 text-white" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-400 ring-2 ring-[#050811] animate-ping"></span>
             </div>
-            <p className="text-xs text-slate-400">Autonomous 5-Stage Network Defense &amp; Attack Simulation Lab</p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-white via-sky-200 to-blue-400 bg-clip-text text-transparent">
+                  AdaptiveShield
+                </h1>
+                <span className="text-[9px] sm:text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-blue-950/90 border border-blue-500/40 text-blue-300 font-semibold tracking-wider">
+                  IPS 5.2
+                </span>
+              </div>
+              <p className="text-[10px] sm:text-xs text-slate-400 hidden sm:block">Autonomous 5-Stage Network Defense</p>
+            </div>
           </div>
         </div>
 
-        {/* Global Navigation Controls */}
-        <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
-          <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-950/50 border border-blue-500/40 text-blue-300">
-            <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-            <span>ANTIGRAVITY PARTICLES: ON</span>
-          </div>
-
-          {/* Navigation Tab Switcher */}
-          <nav className="flex bg-slate-900/90 border border-slate-800 p-1 rounded-2xl shadow-inner">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                activeTab === 'overview'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Zap className="w-3.5 h-3.5" />
-              Defense Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('attacklab')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                activeTab === 'attacklab'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Crosshair className="w-3.5 h-3.5" />
-              Attack Simulation Lab
-            </button>
-            <button
-              onClick={() => setActiveTab('live')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                activeTab === 'live'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Terminal className="w-3.5 h-3.5" />
-              Live Console
-            </button>
-            <button
-              onClick={() => setActiveTab('rules')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                activeTab === 'rules'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Sliders className="w-3.5 h-3.5" />
-              Rules ({rules.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('docs')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                activeTab === 'docs'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              Developer Docs
-            </button>
+        {/* Navigation Tab Switcher */}
+        <div className="w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <nav className="flex items-center gap-1 bg-slate-900/90 border border-slate-800 p-1 rounded-2xl shadow-inner min-w-max">
+            {[
+              { id: 'overview', label: 'Defense Overview', icon: Zap },
+              { id: 'attacklab', label: 'Threat Lab', icon: Crosshair },
+              { id: 'live', label: 'Live Console', icon: Terminal },
+              { id: 'rules', label: `Rules (${rules.length})`, icon: Sliders },
+              { id: 'docs', label: 'Docs', icon: BookOpen }
+            ].map(tab => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 touch-manipulation cursor-pointer ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </nav>
         </div>
       </header>
 
-      {/* 3. MAIN SMOOTH SCROLLING BODY */}
-      <main className="relative z-10 flex-1 p-4 lg:p-8 max-w-[1700px] w-full mx-auto space-y-12">
+      {/* 3. MAIN BODY */}
+      <main className="relative z-10 flex-1 px-4 sm:px-6 lg:px-12 py-6 sm:py-8 max-w-[1700px] w-full mx-auto space-y-8 sm:space-y-12">
 
         {/* HERO SECTION */}
-        <section className="text-center py-6 sm:py-10 space-y-4 max-w-4xl mx-auto">
+        <section className="text-center py-4 sm:py-8 space-y-3 sm:space-y-4 max-w-4xl mx-auto px-2">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 text-xs font-mono font-semibold tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-blue-400" />
             ENTERPRISE NETWORK FIREWALL &amp; ADAPTIVE IPS
           </div>
-          <h1 className="text-3xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            Autonomous Cyber Defense <br />
+          <h1 className="text-2xl sm:text-4xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            Autonomous Cyber Defense <br className="hidden sm:inline" />
             <span className="bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">
               Engineered for Modern Threats
             </span>
           </h1>
-          <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm lg:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
             Protect high-availability infrastructure with sub-millisecond 5-stage packet inspection, volumetric DDoS scrubbing, and interactive attack simulations.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
               onClick={() => setActiveTab('attacklab')}
-              className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition-all flex items-center gap-2"
+              className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/30 transition-all flex items-center gap-2 cursor-pointer touch-manipulation"
             >
               <Crosshair className="w-4 h-4" /> Open Attack Simulation Lab
             </button>
             <button
               onClick={() => setActiveTab('live')}
-              className="px-6 py-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-sm transition-all flex items-center gap-2"
+              className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer touch-manipulation"
             >
               <Terminal className="w-4 h-4 text-blue-400" /> Inspect Live Packet Log
             </button>
           </div>
         </section>
 
-        {/* TELEMETRY STATS ROW (ELEVATED CRISP WHITE CARDS) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.02] transition-all duration-200">
+        {/* TELEMETRY STATS ROW - RESPONSIVE GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.01] transition-all">
             <div>
-              <p className="text-[11px] font-mono text-gray-500 uppercase tracking-wider">Total Packets</p>
-              <h3 className="text-2xl font-bold font-mono text-gray-900 mt-1">{stats.total.toLocaleString()}</h3>
-              <p className="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1 font-mono">
+              <p className="text-[10px] sm:text-[11px] font-mono text-gray-500 uppercase tracking-wider">Total Packets</p>
+              <h3 className="text-xl sm:text-2xl font-bold font-mono text-gray-900 mt-0.5">{stats.total.toLocaleString()}</h3>
+              <p className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5 flex items-center gap-1 font-mono">
                 <Wifi className="w-3 h-3 text-blue-600" /> Ingress Stream
               </p>
             </div>
-            <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
+            <div className="p-2.5 sm:p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
               <Activity className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.02] transition-all duration-200">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.01] transition-all">
             <div>
-              <p className="text-[11px] font-mono text-gray-500 uppercase tracking-wider">Allowed Traffic</p>
-              <h3 className="text-2xl font-bold font-mono text-blue-700 mt-1">{stats.allowed.toLocaleString()}</h3>
-              <p className="text-[11px] text-blue-800 mt-0.5 flex items-center gap-1 font-medium font-mono">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" /> {stats.total > 0 ? ((stats.allowed / stats.total) * 100).toFixed(1) : 100}% Pass Rate
+              <p className="text-[10px] sm:text-[11px] font-mono text-gray-500 uppercase tracking-wider">Allowed Traffic</p>
+              <h3 className="text-xl sm:text-2xl font-bold font-mono text-blue-700 mt-0.5">{stats.allowed.toLocaleString()}</h3>
+              <p className="text-[10px] sm:text-[11px] text-blue-800 mt-0.5 flex items-center gap-1 font-medium font-mono">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" /> {stats.total > 0 ? ((stats.allowed / stats.total) * 100).toFixed(1) : 100}% Pass
               </p>
             </div>
-            <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
+            <div className="p-2.5 sm:p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
               <ShieldCheck className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.02] transition-all duration-200">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.01] transition-all">
             <div>
-              <p className="text-[11px] font-mono text-gray-500 uppercase tracking-wider">Blocked Attacks</p>
-              <h3 className="text-2xl font-bold font-mono text-rose-600 mt-1">{stats.blocked.toLocaleString()}</h3>
-              <p className="text-[11px] text-rose-700 mt-0.5 flex items-center gap-1 font-medium font-mono">
+              <p className="text-[10px] sm:text-[11px] font-mono text-gray-500 uppercase tracking-wider">Blocked Attacks</p>
+              <h3 className="text-xl sm:text-2xl font-bold font-mono text-rose-600 mt-0.5">{stats.blocked.toLocaleString()}</h3>
+              <p className="text-[10px] sm:text-[11px] text-rose-700 mt-0.5 flex items-center gap-1 font-medium font-mono">
                 <XCircle className="w-3 h-3" /> Drops &amp; Filters
               </p>
             </div>
-            <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600">
+            <div className="p-2.5 sm:p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600">
               <ShieldAlert className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.02] transition-all duration-200">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.01] transition-all">
             <div>
-              <p className="text-[11px] font-mono text-gray-500 uppercase tracking-wider">Active ACL Rules</p>
-              <h3 className="text-2xl font-bold font-mono text-blue-700 mt-1">{rules.filter(r => r.enabled).length} / {rules.length}</h3>
-              <p className="text-[11px] text-blue-800 mt-0.5 flex items-center gap-1 font-medium font-mono">
-                <Lock className="w-3 h-3" /> Enforced Policies
+              <p className="text-[10px] sm:text-[11px] font-mono text-gray-500 uppercase tracking-wider">Active ACL Rules</p>
+              <h3 className="text-xl sm:text-2xl font-bold font-mono text-blue-700 mt-0.5">{rules.filter(r => r.enabled).length} / {rules.length}</h3>
+              <p className="text-[10px] sm:text-[11px] text-blue-800 mt-0.5 flex items-center gap-1 font-medium font-mono">
+                <Lock className="w-3 h-3" /> Enforced
               </p>
             </div>
-            <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
+            <div className="p-2.5 sm:p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
               <Sliders className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.02] transition-all duration-200">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-xl flex items-center justify-between hover:scale-[1.01] transition-all sm:col-span-2 lg:col-span-1">
             <div>
-              <p className="text-[11px] font-mono text-gray-500 uppercase tracking-wider">Dynamic Auto-Bans</p>
-              <h3 className="text-2xl font-bold font-mono text-indigo-700 mt-1">{stats.autoBans}</h3>
-              <p className="text-[11px] text-indigo-800 mt-0.5 flex items-center gap-1 font-medium font-mono">
-                <Flame className="w-3 h-3 text-rose-500" /> Reputation Blocks
+              <p className="text-[10px] sm:text-[11px] font-mono text-gray-500 uppercase tracking-wider">Dynamic Auto-Bans</p>
+              <h3 className="text-xl sm:text-2xl font-bold font-mono text-indigo-700 mt-0.5">{stats.autoBans}</h3>
+              <p className="text-[10px] sm:text-[11px] text-indigo-800 mt-0.5 flex items-center gap-1 font-medium font-mono">
+                <Flame className="w-3 h-3 text-rose-500" /> Auto-Shield
               </p>
             </div>
-            <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600">
+            <div className="p-2.5 sm:p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600">
               <Zap className="w-5 h-5" />
             </div>
           </div>
         </div>
 
-        {/* TAB VIEW 1: ATTACK SIMULATION LAB */}
+        {/* TAB 1: ATTACK SIMULATION LAB */}
         {activeTab === 'attacklab' && (
           <section id="attack-lab-section">
             <AttackVisualizerLab />
           </section>
         )}
 
-        {/* TAB VIEW 2: DEFENSE OVERVIEW & RECHARTS GRAPH */}
+        {/* TAB 2: DEFENSE OVERVIEW & RECHARTS GRAPH */}
         {activeTab === 'overview' && (
           <div className="space-y-8">
-            {/* Real-time Recharts Graph */}
-            <div className="p-6 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-2xl space-y-4">
+            <div className="p-4 sm:p-6 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-2xl space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                  <h2 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
                     <BarChart3 className="w-5 h-5 text-blue-600" />
-                    Live Ingress Throughput &amp; Bandwidth Distribution (Recharts)
+                    Live Ingress Throughput &amp; Bandwidth Distribution
                   </h2>
                   <p className="text-xs text-gray-500">Continuous real-time throughput: Sanitized Client Packets vs Blocked Hostile Attacks</p>
                 </div>
@@ -874,7 +804,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="h-64 w-full">
+              <div className="h-56 sm:h-64 lg:h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={trafficChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
@@ -923,58 +853,34 @@ export default function App() {
               </div>
             </div>
 
-            {/* Embedded Attack Lab Preview */}
             <AttackVisualizerLab />
           </div>
         )}
 
-        {/* TAB VIEW 3: LIVE TERMINAL CONSOLE */}
+        {/* TAB 3: LIVE TERMINAL CONSOLE */}
         {activeTab === 'live' && (
           <div className="space-y-4">
-            <div className="p-6 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-2xl space-y-4">
+            <div className="p-4 sm:p-6 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-2xl space-y-4">
               {/* Terminal Controls Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
-                <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-mono">
                     <Terminal className="w-4 h-4 text-blue-600" />
-                    <span className="font-semibold text-gray-800">Live Ingress Capture Terminal</span>
-                    <span className="text-gray-500">({filteredPackets.length} captured)</span>
+                    <span className="font-semibold text-gray-800">Ingress Terminal</span>
+                    <span className="text-gray-500">({filteredPackets.length})</span>
                   </div>
 
                   <button
                     onClick={() => setIsStreaming(!isStreaming)}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer touch-manipulation ${
                       isStreaming
                         ? 'bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100'
                         : 'bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100'
                     }`}
                   >
                     {isStreaming ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 text-blue-600" />}
-                    {isStreaming ? 'Pause Ingress' : 'Resume Ingress'}
+                    <span>{isStreaming ? 'Pause' : 'Resume'}</span>
                   </button>
-
-                  {/* Speed Switcher */}
-                  <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-mono">
-                    <span className="px-2 text-gray-500 text-[10px]">SPEED:</span>
-                    {[
-                      { label: '1x', val: 1200 },
-                      { label: '2x', val: 800 },
-                      { label: '4x', val: 300 },
-                      { label: 'Turbo', val: 100 }
-                    ].map(s => (
-                      <button
-                        key={s.label}
-                        onClick={() => setStreamSpeed(s.val)}
-                        className={`px-2 py-0.5 rounded-lg transition-all duration-200 ${
-                          streamSpeed === s.val
-                            ? 'bg-blue-600 text-white font-bold shadow-sm'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        {s.label}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Filters & Log Exporters */}
@@ -984,7 +890,7 @@ export default function App() {
                       <button
                         key={f}
                         onClick={() => setPacketFilter(f)}
-                        className={`px-2.5 py-1 rounded-lg transition-all duration-200 ${
+                        className={`px-2 sm:px-2.5 py-1 rounded-lg transition-all text-[11px] sm:text-xs cursor-pointer touch-manipulation ${
                           packetFilter === f
                             ? 'bg-white text-blue-800 border border-blue-300 font-bold shadow-sm'
                             : 'text-gray-600 hover:text-gray-900'
@@ -999,7 +905,7 @@ export default function App() {
                     <button
                       onClick={exportLogsAsJSON}
                       title="Export Security Logs as JSON"
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs text-slate-700 font-mono transition-all duration-200"
+                      className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs text-slate-700 font-mono transition-all cursor-pointer touch-manipulation"
                     >
                       <Download className="w-3.5 h-3.5 text-blue-600" />
                       JSON
@@ -1007,7 +913,7 @@ export default function App() {
                     <button
                       onClick={exportLogsAsCSV}
                       title="Export Security Logs as CSV"
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs text-slate-700 font-mono transition-all duration-200"
+                      className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs text-slate-700 font-mono transition-all cursor-pointer touch-manipulation"
                     >
                       <Download className="w-3.5 h-3.5 text-emerald-600" />
                       CSV
@@ -1018,16 +924,16 @@ export default function App() {
 
               {/* Terminal Table */}
               <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 max-h-[520px] overflow-y-auto">
-                <table className="w-full text-left text-xs font-mono border-collapse">
+                <table className="w-full text-left text-xs font-mono border-collapse min-w-[700px]">
                   <thead className="bg-slate-100 text-gray-600 sticky top-0 z-10 border-b border-slate-200">
                     <tr>
                       <th className="p-3">STATUS</th>
                       <th className="p-3">TIMESTAMP</th>
                       <th className="p-3">SOURCE IP</th>
-                      <th className="p-3">DEST PORT</th>
+                      <th className="p-3">PORT</th>
                       <th className="p-3">PROTO</th>
-                      <th className="p-3">RISK &amp; SEVERITY</th>
-                      <th className="p-3">VERDICT / RULE TRIGGER</th>
+                      <th className="p-3">SEVERITY</th>
+                      <th className="p-3">VERDICT</th>
                       <th className="p-3 text-right">INSPECT</th>
                     </tr>
                   </thead>
@@ -1035,7 +941,7 @@ export default function App() {
                     {filteredPackets.length === 0 ? (
                       <tr>
                         <td colSpan="8" className="p-8 text-center text-gray-400 italic">
-                          No packets matching filter. Incoming network traffic will stream automatically.
+                          No packets matching filter. Traffic streams automatically.
                         </td>
                       </tr>
                     ) : (
@@ -1049,25 +955,25 @@ export default function App() {
                           >
                             <td className="p-3 whitespace-nowrap">
                               {item.allowed ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-700 text-[11px] font-semibold">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-700 text-[10px] font-semibold">
                                   <CheckCircle2 className="w-3 h-3" /> ALLOW
                                 </span>
                               ) : item.action === 'RATE_LIMITED' ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-300 text-amber-700 text-[11px] font-semibold">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 border border-amber-300 text-amber-700 text-[10px] font-semibold">
                                   <AlertTriangle className="w-3 h-3" /> RATE LIMIT
                                 </span>
                               ) : item.action === 'AUTO_BANNED' ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-50 border border-indigo-300 text-indigo-700 text-[11px] font-semibold">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-indigo-50 border border-indigo-300 text-indigo-700 text-[10px] font-semibold">
                                   <Flame className="w-3 h-3" /> AUTO BAN
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-rose-50 border border-rose-300 text-rose-700 text-[11px] font-semibold">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-50 border border-rose-300 text-rose-700 text-[10px] font-semibold">
                                   <XCircle className="w-3 h-3" /> BLOCK
                                 </span>
                               )}
                             </td>
 
-                            <td className="p-3 text-gray-500 whitespace-nowrap">
+                            <td className="p-3 text-gray-500 whitespace-nowrap text-[11px]">
                               {new Date(item.packet.timestamp).toLocaleTimeString()}
                             </td>
 
@@ -1076,17 +982,13 @@ export default function App() {
                             </td>
 
                             <td className="p-3 whitespace-nowrap">
-                              <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-800">
+                              <span className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-800 text-[11px]">
                                 :{item.packet.dstPort}
                               </span>
                             </td>
 
                             <td className="p-3 whitespace-nowrap">
-                              <span className={`px-2 py-0.5 rounded font-semibold ${
-                                item.packet.protocol === 'HTTPS' ? 'text-blue-800 bg-blue-100' :
-                                item.packet.protocol === 'SSH' ? 'text-purple-800 bg-purple-100' :
-                                item.packet.protocol === 'Telnet' ? 'text-rose-800 bg-rose-100' : 'text-gray-800 bg-slate-100'
-                              }`}>
+                              <span className="px-1.5 py-0.5 rounded font-semibold text-[11px] bg-slate-100">
                                 {item.packet.protocol}
                               </span>
                             </td>
@@ -1097,7 +999,7 @@ export default function App() {
                               </span>
                             </td>
 
-                            <td className="p-3 text-gray-700 truncate max-w-xs">
+                            <td className="p-3 text-gray-700 truncate max-w-xs text-[11px]">
                               <span className={!item.allowed ? 'text-rose-700 font-medium' : 'text-gray-600'}>
                                 {item.verdictReason}
                               </span>
@@ -1109,7 +1011,7 @@ export default function App() {
                                   e.stopPropagation();
                                   setSelectedDecision(item);
                                 }}
-                                className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-300 text-blue-800 hover:bg-blue-100 transition-all text-[11px] font-mono flex items-center gap-1 ml-auto"
+                                className="px-2 py-1 rounded bg-blue-50 border border-blue-300 text-blue-800 hover:bg-blue-100 transition-all text-[11px] font-mono flex items-center gap-1 ml-auto cursor-pointer"
                               >
                                 <Eye className="w-3 h-3 text-blue-600" /> Audit
                               </button>
@@ -1125,53 +1027,51 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB VIEW 4: FIREWALL RULES MANAGEMENT */}
+        {/* TAB 4: RULES MANAGEMENT */}
         {activeTab === 'rules' && (
           <div className="space-y-4">
-            <div className="p-6 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-2xl space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
+            <div className="p-4 sm:p-6 rounded-3xl bg-white text-gray-900 border border-slate-200 shadow-2xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
                 <div>
-                  <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                  <h2 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
                     <Sliders className="w-4 h-4 text-blue-600" />
-                    Firewall Access Control List (ACL) &amp; Custom Rules
+                    Firewall Access Control List (ACL)
                   </h2>
-                  <p className="text-xs text-gray-500">Configure deterministic firewall rules for IP, Ports, Protocols, and Signature regexes.</p>
+                  <p className="text-xs text-gray-500">Configure deterministic rules for IP, Ports, Protocols, and RegEx signatures.</p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="relative">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="relative flex-1 sm:flex-initial">
                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
                     <input
                       type="text"
                       placeholder="Search rules..."
                       value={ruleSearch}
                       onChange={(e) => setRuleSearch(e.target.value)}
-                      className="pl-9 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-300 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 font-mono w-48 sm:w-64"
+                      className="pl-9 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-300 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 font-mono w-full sm:w-56"
                     />
                   </div>
 
                   <button
                     onClick={() => setNewRuleModalOpen(true)}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all duration-200"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all cursor-pointer whitespace-nowrap"
                   >
                     <Plus className="w-4 h-4" /> Create Rule
                   </button>
                 </div>
               </div>
 
-              {/* Rules Table */}
               <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50">
-                <table className="w-full text-left text-xs font-mono border-collapse">
+                <table className="w-full text-left text-xs font-mono border-collapse min-w-[650px]">
                   <thead className="bg-slate-100 text-gray-600 border-b border-slate-200">
                     <tr>
                       <th className="p-3">RULE ID</th>
                       <th className="p-3">TYPE</th>
-                      <th className="p-3">MATCH VALUE</th>
+                      <th className="p-3">TARGET VALUE</th>
                       <th className="p-3">ACTION</th>
-                      <th className="p-3">RULE DESCRIPTION</th>
-                      <th className="p-3">PRIORITY</th>
+                      <th className="p-3">DESCRIPTION</th>
                       <th className="p-3">STATUS</th>
-                      <th className="p-3 text-right">ACTIONS</th>
+                      <th className="p-3 text-right">DELETE</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 text-gray-800 bg-white">
@@ -1192,29 +1092,17 @@ export default function App() {
                           <td className="p-3 font-semibold text-gray-900">{rule.value}</td>
                           <td className="p-3 whitespace-nowrap">
                             <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                              rule.action === 'ALLOW'
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
-                                : 'bg-rose-50 text-rose-700 border border-rose-300'
+                              rule.action === 'ALLOW' ? 'bg-emerald-50 text-emerald-700 border border-emerald-300' : 'bg-rose-50 text-rose-700 border border-rose-300'
                             }`}>
                               {rule.action}
                             </span>
                           </td>
                           <td className="p-3 text-gray-600">{rule.label}</td>
                           <td className="p-3 whitespace-nowrap">
-                            <span className={`text-[11px] font-semibold ${
-                              rule.priority === 'Critical' ? 'text-rose-600' :
-                              rule.priority === 'High' ? 'text-amber-600' : 'text-gray-500'
-                            }`}>
-                              {rule.priority}
-                            </span>
-                          </td>
-                          <td className="p-3 whitespace-nowrap">
                             <button
                               onClick={() => toggleRule(rule.id)}
-                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all duration-200 border ${
-                                rule.enabled
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                                  : 'bg-slate-100 text-gray-400 border-gray-200'
+                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all border cursor-pointer ${
+                                rule.enabled ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-slate-100 text-gray-400 border-gray-200'
                               }`}
                             >
                               {rule.enabled ? 'Active' : 'Disabled'}
@@ -1223,7 +1111,7 @@ export default function App() {
                           <td className="p-3 text-right whitespace-nowrap">
                             <button
                               onClick={() => deleteRule(rule.id)}
-                              className="p-1.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 transition-all duration-200"
+                              className="p-1.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 transition-all cursor-pointer"
                               title="Delete Rule"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -1238,7 +1126,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB VIEW 5: DEVELOPER DOCS */}
+        {/* TAB 5: DEVELOPER DOCS */}
         {activeTab === 'docs' && (
           <section id="docs-section">
             <DeveloperDocs />
@@ -1246,36 +1134,34 @@ export default function App() {
         )}
       </main>
 
-      {/* DECISION BREAKDOWN MODAL */}
+      {/* DECISION AUDIT MODAL */}
       {selectedDecision && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div className="bg-white text-gray-900 border border-slate-200 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col font-['Inter',sans-serif]">
-            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-slate-50 sticky top-0 z-10">
+            <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-slate-50 sticky top-0 z-10">
               <div className="flex items-center gap-3">
-                <div className={`p-2.5 rounded-2xl ${
-                  selectedDecision.allowed
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
-                    : 'bg-rose-50 text-rose-700 border border-rose-300'
+                <div className={`p-2 sm:p-2.5 rounded-2xl ${
+                  selectedDecision.allowed ? 'bg-emerald-50 text-emerald-700 border border-emerald-300' : 'bg-rose-50 text-rose-700 border border-rose-300'
                 }`}>
                   {selectedDecision.allowed ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                    Packet Inspection Decision: [{selectedDecision.packet.id}]
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900">
+                    Decision: [{selectedDecision.packet.id}]
                   </h3>
-                  <p className="text-xs text-gray-500">Deep Packet Inspection &amp; 5-Stage Audit Log</p>
+                  <p className="text-[11px] sm:text-xs text-gray-500">5-Stage Deep Packet Inspection Audit</p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedDecision(null)}
-                className="text-gray-400 hover:text-gray-700 p-1.5 rounded-xl hover:bg-slate-200"
+                className="text-gray-400 hover:text-gray-700 p-1.5 rounded-xl hover:bg-slate-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="p-6 space-y-5 text-xs font-mono">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 text-xs font-mono">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200">
                 <div>
                   <span className="text-gray-500 block text-[10px]">SOURCE IP</span>
                   <span className="text-blue-700 font-bold">{selectedDecision.packet.srcIp}</span>
@@ -1299,40 +1185,31 @@ export default function App() {
               </div>
 
               <div>
-                <span className="text-gray-700 font-semibold block mb-1">RAW PAYLOAD BUFFER:</span>
-                <div className="p-3.5 bg-slate-900 text-slate-100 rounded-2xl border border-slate-800 overflow-x-auto break-all font-mono text-[11px] leading-relaxed">
+                <span className="text-gray-700 font-semibold block mb-1">RAW PAYLOAD:</span>
+                <div className="p-3 bg-slate-900 text-slate-100 rounded-2xl border border-slate-800 overflow-x-auto break-all font-mono text-[11px]">
                   {selectedDecision.packet.payload || '<EMPTY PAYLOAD>'}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <span className="text-gray-700 font-semibold block">5-STAGE PIPELINE EVALUATION TRACE:</span>
+                <span className="text-gray-700 font-semibold block">PIPELINE EVALUATION TRACE:</span>
                 <div className="space-y-2">
                   {selectedDecision.stageResults.map((stg, i) => (
                     <div
                       key={i}
-                      className={`p-3.5 rounded-2xl border ${
-                        stg.status === 'BLOCK'
-                          ? 'bg-rose-50 border-rose-200 text-rose-800'
-                          : 'bg-slate-50 border-slate-200 text-gray-800'
+                      className={`p-3 rounded-2xl border ${
+                        stg.status === 'BLOCK' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-slate-50 border-slate-200 text-gray-800'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center justify-between mb-0.5">
                         <span className="font-bold text-gray-900">{stg.stageName}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          stg.status === 'BLOCK'
-                            ? 'bg-rose-100 text-rose-700 border border-rose-300'
-                            : 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                          stg.status === 'BLOCK' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
                         }`}>
                           {stg.status}
                         </span>
                       </div>
                       <p className="text-[11px] text-gray-600">{stg.reason}</p>
-                      {stg.matchedRule && (
-                        <div className="mt-1.5 text-[10px] text-blue-800 bg-white p-1.5 rounded-lg border border-blue-200">
-                          Matched Rule ID: <strong>{stg.matchedRule.id || stg.matchedRule.name}</strong> ({stg.matchedRule.label || stg.matchedRule.name})
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -1342,7 +1219,7 @@ export default function App() {
             <div className="p-4 border-t border-gray-100 bg-slate-50 flex justify-end">
               <button
                 onClick={() => setSelectedDecision(null)}
-                className="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-all duration-200"
+                className="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
               >
                 Close Audit Trace
               </button>
@@ -1351,21 +1228,21 @@ export default function App() {
         </div>
       )}
 
-      {/* ADD NEW RULE MODAL */}
+      {/* CREATE RULE MODAL */}
       {newRuleModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <form
             onSubmit={handleAddRule}
-            className="bg-white text-gray-900 border border-slate-200 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 font-['Inter',sans-serif]"
+            className="bg-white text-gray-900 border border-slate-200 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 font-['Inter',sans-serif]"
           >
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
                 <Plus className="w-4 h-4 text-blue-600" /> Create Firewall Rule
               </h3>
               <button
                 type="button"
                 onClick={() => setNewRuleModalOpen(false)}
-                className="text-gray-400 hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-700 cursor-pointer"
               >
                 ✕
               </button>
@@ -1440,29 +1317,29 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setNewRuleModalOpen(false)}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-gray-700 text-xs font-semibold transition-all duration-200"
+                className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-gray-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all duration-200"
+                className="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-600/20 cursor-pointer"
               >
-                Save &amp; Enforce Rule
+                Save Rule
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* 4. GLOBAL FOOTER */}
-      <footer className="relative z-10 border-t border-slate-800/80 bg-slate-950/90 px-4 lg:px-8 py-6 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-4 font-mono">
+      {/* 4. FOOTER */}
+      <footer className="relative z-10 border-t border-slate-800/80 bg-slate-950/90 px-4 sm:px-6 lg:px-12 py-5 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3 font-mono">
         <div className="flex items-center gap-2">
           <Shield className="w-4 h-4 text-blue-500" />
-          <span className="text-slate-200 font-medium">AdaptiveShield Autonomous Network Firewall &amp; IPS</span>
+          <span className="text-slate-200 font-medium">AdaptiveShield Autonomous Network Firewall</span>
         </div>
         <div>
-          <span>Engine Status: <strong className="text-emerald-400 font-semibold">ALL 5 PIPELINE STAGES OPERATIONAL</strong></span>
+          <span>Engine Status: <strong className="text-emerald-400 font-semibold">5/5 PIPELINE STAGES OPERATIONAL</strong></span>
         </div>
       </footer>
     </div>

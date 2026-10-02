@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Flame,
   Shield,
   ShieldAlert,
   ShieldCheck,
-  Zap,
-  Radio,
-  Lock,
-  Unlock,
-  Bug,
   Crosshair,
   Server,
   User,
@@ -16,23 +11,15 @@ import {
   Play,
   Pause,
   RotateCcw,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
+  Lock,
   Database,
-  Terminal,
-  FileCode,
   Mail,
   Key,
   Globe,
   Share2,
   HardDrive,
-  Eye,
-  ArrowRight,
   Sparkles,
-  Layers,
   Code,
-  Check,
   ShieldX
 } from 'lucide-react';
 
@@ -155,13 +142,11 @@ export default function AttackVisualizerLab() {
 
   // DDoS State
   const [serverHealth, setServerHealth] = useState(100);
-  const [ddosPackets, setDdosPackets] = useState([]);
 
   // Phishing State
   const [phishPacketProgress, setPhishPacketProgress] = useState(0);
 
   // SQLi State
-  const [sqliInput, setSqliInput] = useState("admin' OR '1'='1' --");
   const [sqliPacketPos, setSqliPacketPos] = useState(0);
 
   // MitM State
@@ -205,7 +190,6 @@ export default function AttackVisualizerLab() {
     ]);
   };
 
-  // Switch Attack
   const handleSelectAttack = (id) => {
     setSelectedAttackId(id);
     handleRestart();
@@ -214,7 +198,6 @@ export default function AttackVisualizerLab() {
   // 1. DDOS ANIMATION ENGINE
   useEffect(() => {
     if (selectedAttackId !== 'ddos' || !isPlaying) return;
-
     if (!shieldActive) {
       setServerHealth(prev => Math.max(8, prev - 2.5));
     } else {
@@ -265,23 +248,23 @@ export default function AttackVisualizerLab() {
   }, [animationTick, selectedAttackId, isPlaying]);
 
   return (
-    <div className="space-y-8 animate-fadeIn text-gray-900">
+    <div className="space-y-6 sm:space-y-8 animate-fadeIn text-gray-900 w-full">
       {/* Section Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 text-xs font-mono font-semibold tracking-wider">
+      <div className="text-center max-w-3xl mx-auto space-y-2.5 px-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/30 text-blue-400 text-xs font-mono font-semibold tracking-wider">
           <Crosshair className="w-3.5 h-3.5 text-blue-400" />
           INTERACTIVE THREAT LAB &amp; PACKET SIMULATOR
         </div>
-        <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+        <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
           Cyber Attack Techniques <span className="bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">&amp; Defense Engine</span>
         </h2>
-        <p className="text-sm sm:text-base text-slate-300">
+        <p className="text-xs sm:text-sm lg:text-base text-slate-300">
           Select an attack category below to watch dynamic packet movement, visual exploit execution, and real-time AdaptiveShield active blocking.
         </p>
       </div>
 
-      {/* Attack Selection Carousel / Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      {/* Attack Selection Cards - Responsive Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
         {ATTACK_CATALOG.map((atk) => {
           const Icon = atk.icon;
           const isSelected = selectedAttackId === atk.id;
@@ -289,19 +272,19 @@ export default function AttackVisualizerLab() {
             <button
               key={atk.id}
               onClick={() => handleSelectAttack(atk.id)}
-              className={`p-4 rounded-2xl text-left flex flex-col justify-between space-y-3 transition-all duration-200 cursor-pointer ${
+              className={`p-3 sm:p-4 rounded-2xl text-left flex flex-col justify-between space-y-2 sm:space-y-3 transition-all duration-200 cursor-pointer min-h-[90px] sm:min-h-[110px] ${
                 isSelected
                   ? 'bg-white text-gray-900 shadow-xl shadow-blue-500/15 ring-2 ring-blue-500 scale-[1.02]'
                   : 'bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800'
               }`}
             >
-              <div className="flex items-center justify-between">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+              <div className="flex items-center justify-between w-full">
+                <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center ${
                   isSelected ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-800 text-slate-400'
                 }`}>
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                <span className={`text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${
                   atk.severity === 'CRITICAL'
                     ? 'bg-rose-500/10 text-rose-500 border border-rose-500/30'
                     : 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
@@ -311,10 +294,10 @@ export default function AttackVisualizerLab() {
               </div>
 
               <div>
-                <h3 className={`text-xs font-bold ${isSelected ? 'text-gray-900' : 'text-slate-200'}`}>
+                <h3 className={`text-xs sm:text-sm font-bold truncate ${isSelected ? 'text-gray-900' : 'text-slate-200'}`}>
                   {atk.shortName}
                 </h3>
-                <p className={`text-[10px] mt-0.5 line-clamp-1 ${isSelected ? 'text-gray-500' : 'text-slate-400'}`}>
+                <p className={`text-[9px] sm:text-[10px] mt-0.5 truncate ${isSelected ? 'text-gray-500' : 'text-slate-400'}`}>
                   {atk.cveExample.split(':')[0]}
                 </p>
               </div>
@@ -323,189 +306,155 @@ export default function AttackVisualizerLab() {
         })}
       </div>
 
-      {/* Interactive Canvas Visualizer Box (High-Contrast White Card) */}
-      <div className="rounded-3xl bg-white border border-slate-200 shadow-2xl p-6 lg:p-8 space-y-6">
+      {/* Interactive Visualizer Box */}
+      <div className="rounded-3xl bg-white border border-slate-200 shadow-2xl p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Controls Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
               <activeAttack.icon className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900">
                   {activeAttack.title}
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold">
+                <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold whitespace-nowrap">
                   LIVE PACKET SIMULATOR
                 </span>
               </div>
-              <p className="text-xs text-gray-500">Compare unfiltered attack impact vs. active AdaptiveShield defense.</p>
+              <p className="text-[11px] sm:text-xs text-gray-500">Compare unfiltered attack impact vs. active AdaptiveShield defense.</p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             {/* Play/Pause */}
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-gray-700 transition-all duration-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-gray-700 transition-all duration-200 touch-manipulation cursor-pointer"
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 text-blue-600" />}
-              {isPlaying ? 'Pause' : 'Play'}
+              <span>{isPlaying ? 'Pause' : 'Play'}</span>
             </button>
 
             {/* Restart */}
             <button
               onClick={handleRestart}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-gray-700 transition-all duration-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-gray-700 transition-all duration-200 touch-manipulation cursor-pointer"
               title="Restart Simulation"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              Reset
+              <span>Reset</span>
             </button>
 
             {/* AdaptiveShield Defense Mode Toggle */}
             <button
               onClick={() => setShieldActive(!shieldActive)}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 shadow-md ${
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 shadow-md touch-manipulation cursor-pointer ${
                 shieldActive
                   ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/25 ring-2 ring-blue-400'
                   : 'bg-rose-50 text-rose-700 border border-rose-300 hover:bg-rose-100'
               }`}
             >
               {shieldActive ? <ShieldCheck className="w-4 h-4 text-white" /> : <ShieldX className="w-4 h-4 text-rose-600" />}
-              <span>{shieldActive ? 'AdaptiveShield Defense: ON' : 'AdaptiveShield Defense: OFF'}</span>
+              <span>{shieldActive ? 'Defense: ON' : 'Defense: OFF'}</span>
             </button>
           </div>
         </div>
 
         {/* Dynamic Dark Canvas Stage */}
-        <div className="rounded-2xl bg-gradient-to-br from-slate-900 via-[#070c18] to-slate-950 border border-slate-800 p-6 sm:p-8 min-h-[420px] flex flex-col justify-between relative overflow-hidden text-slate-100 shadow-inner">
+        <div className="rounded-2xl bg-gradient-to-br from-slate-900 via-[#070c18] to-slate-950 border border-slate-800 p-4 sm:p-6 lg:p-8 min-h-[360px] sm:min-h-[420px] flex flex-col justify-between relative overflow-hidden text-slate-100 shadow-inner">
 
-          {/* =========================================================================
-              1. DDOS ATTACK VISUALIZER (SVG PACKET FLOW & DEFENSE BARRIER)
-              ========================================================================= */}
+          {/* 1. DDOS ATTACK VISUALIZER */}
           {selectedAttackId === 'ddos' && (
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs font-mono">
                 <div className="flex items-center gap-2">
-                  <span className={`w-2.5 h-2.5 rounded-full ${shieldActive ? 'bg-blue-400' : 'bg-rose-500 animate-ping'}`}></span>
+                  <span className={`w-2 h-2 rounded-full ${shieldActive ? 'bg-blue-400' : 'bg-rose-500 animate-ping'}`}></span>
                   <span className={shieldActive ? 'text-blue-300 font-bold' : 'text-rose-400 font-bold'}>
                     {shieldActive ? 'SHIELD FILTERING & VOLUMETRIC SCRUBBING' : 'UNFILTERED VOLUMETRIC FLOOD'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span>Target Server Health:</span>
+                  <span>Server Health:</span>
                   <strong className={serverHealth < 40 ? 'text-rose-400 font-bold animate-pulse' : 'text-emerald-400 font-bold'}>
-                    {Math.round(serverHealth)}% {serverHealth < 40 ? '(CRASHING / 503)' : '(OPERATIONAL)'}
+                    {Math.round(serverHealth)}% {serverHealth < 40 ? '(CRASHING / 503)' : '(HEALTHY)'}
                   </strong>
                 </div>
               </div>
 
-              {/* Interactive SVG Animation Stage */}
-              <div className="relative h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-6 sm:px-12">
-                {/* Background Connecting Lines */}
+              <div className="relative h-56 sm:h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-3 sm:px-8 lg:px-12">
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                  {/* Botnet to Shield/Server lines */}
-                  <line x1="12%" y1="20%" x2="50%" y2="50%" stroke="#e11d48" strokeWidth="2" strokeDasharray="4 4" opacity="0.4" />
+                  <line x1="12%" y1="25%" x2="50%" y2="50%" stroke="#e11d48" strokeWidth="2" strokeDasharray="4 4" opacity="0.4" />
                   <line x1="12%" y1="50%" x2="50%" y2="50%" stroke="#e11d48" strokeWidth="2" strokeDasharray="4 4" opacity="0.4" />
-                  <line x1="12%" y1="80%" x2="50%" y2="50%" stroke="#e11d48" strokeWidth="2" strokeDasharray="4 4" opacity="0.4" />
-
-                  {/* Legitimate client line */}
-                  <line x1="12%" y1="92%" x2="50%" y2="50%" stroke="#10b981" strokeWidth="2" strokeDasharray="4 4" opacity="0.5" />
-
-                  {/* Shield to Server line */}
+                  <line x1="12%" y1="75%" x2="50%" y2="50%" stroke="#e11d48" strokeWidth="2" strokeDasharray="4 4" opacity="0.4" />
                   <line x1="50%" y1="50%" x2="88%" y2="50%" stroke={shieldActive ? '#10b981' : '#e11d48'} strokeWidth="3" opacity="0.8" />
                 </svg>
 
-                {/* Animated Flowing Packets */}
-                {/* Red Attack Packets */}
                 {isPlaying && (
                   <>
                     <div
-                      className="absolute w-3.5 h-3.5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 transition-all duration-75"
+                      className="absolute w-3 h-3 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50"
                       style={{
-                        left: shieldActive
-                          ? `${12 + (animationTick % 40) * 0.95}%` // Deflects/drops at shield (50%)
-                          : `${12 + (animationTick % 80) * 0.95}%`, // Reaches server (88%)
+                        left: shieldActive ? `${12 + (animationTick % 40) * 0.95}%` : `${12 + (animationTick % 80) * 0.95}%`,
                         top: '40%',
                         opacity: shieldActive && (animationTick % 40) > 35 ? 0 : 1
                       }}
-                    ></div>
+                    />
                     <div
-                      className="absolute w-3.5 h-3.5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 transition-all duration-75"
+                      className="absolute w-3 h-3 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50"
                       style={{
-                        left: shieldActive
-                          ? `${12 + ((animationTick + 20) % 40) * 0.95}%`
-                          : `${12 + ((animationTick + 20) % 80) * 0.95}%`,
+                        left: shieldActive ? `${12 + ((animationTick + 20) % 40) * 0.95}%` : `${12 + ((animationTick + 20) % 80) * 0.95}%`,
                         top: '55%',
                         opacity: shieldActive && ((animationTick + 20) % 40) > 35 ? 0 : 1
                       }}
-                    ></div>
+                    />
                     <div
-                      className="absolute w-3.5 h-3.5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 transition-all duration-75"
-                      style={{
-                        left: shieldActive
-                          ? `${12 + ((animationTick + 40) % 40) * 0.95}%`
-                          : `${12 + ((animationTick + 40) % 80) * 0.95}%`,
-                        top: '30%',
-                        opacity: shieldActive && ((animationTick + 40) % 40) > 35 ? 0 : 1
-                      }}
-                    ></div>
-                    {/* Clean Green User Packet */}
-                    <div
-                      className="absolute w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50 transition-all duration-75"
+                      className="absolute w-3 h-3 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"
                       style={{
                         left: `${12 + (animationTick % 76) * 1}%`,
                         top: '50%'
                       }}
-                    ></div>
+                    />
                   </>
                 )}
 
-                {/* LEFT NODE: BOTNET SWARM */}
-                <div className="relative z-10 p-3 rounded-2xl bg-slate-900 border border-rose-500/40 text-center space-y-1 shadow-lg">
-                  <div className="w-10 h-10 rounded-xl bg-rose-950 text-rose-400 flex items-center justify-center mx-auto animate-pulse">
-                    <Bot className="w-5 h-5" />
+                {/* LEFT NODE */}
+                <div className="relative z-10 p-2 sm:p-3 rounded-2xl bg-slate-900 border border-rose-500/40 text-center space-y-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-rose-950 text-rose-400 flex items-center justify-center mx-auto">
+                    <Bot className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold text-rose-400">Botnet Ingress</div>
-                  <div className="text-[9px] text-slate-400 font-mono">10,000+ Bots</div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold text-rose-400">Botnet Ingress</div>
+                  <div className="text-[8px] sm:text-[9px] text-slate-400 font-mono">10,000+ Bots</div>
                 </div>
 
-                {/* MIDDLE NODE: ADAPTIVESHIELD RATE LIMITER */}
+                {/* MIDDLE NODE */}
                 <div className="relative z-10 flex flex-col items-center">
-                  <div className={`p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
+                  <div className={`p-2.5 sm:p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
                     shieldActive
-                      ? 'bg-blue-950/90 border-blue-400 text-blue-300 ring-8 ring-blue-500/20 scale-105 shadow-xl shadow-blue-500/30'
+                      ? 'bg-blue-950/90 border-blue-400 text-blue-300 ring-4 sm:ring-8 ring-blue-500/20 shadow-xl'
                       : 'bg-slate-900/60 border-slate-700 text-slate-600 opacity-40'
                   }`}>
-                    <Shield className="w-8 h-8 mx-auto animate-gentle-pulse" />
-                    <span className="text-[11px] font-mono font-bold mt-1 block">
-                      {shieldActive ? 'WAF & Rate Limiter' : 'Shield Inactive'}
+                    <Shield className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
+                    <span className="text-[9px] sm:text-[11px] font-mono font-bold mt-1 block">
+                      {shieldActive ? 'WAF & Rate Limiter' : 'Shield Off'}
                     </span>
                   </div>
-                  <span className={`text-[10px] font-mono mt-2 px-2 py-0.5 rounded font-bold ${
-                    shieldActive ? 'bg-blue-950 text-blue-300 border border-blue-500/40' : 'bg-rose-950 text-rose-400'
-                  }`}>
-                    {shieldActive ? 'DROPPING 450K REQ/S' : 'PASSING RAW'}
-                  </span>
                 </div>
 
-                {/* RIGHT NODE: TARGET SERVER */}
-                <div className={`relative z-10 p-3.5 rounded-2xl border transition-all duration-300 text-center space-y-1 ${
-                  serverHealth < 40
-                    ? 'bg-rose-950/80 border-rose-500 text-rose-300 ring-4 ring-rose-500/40 animate-pulse'
-                    : 'bg-slate-900 border-emerald-500/40 text-emerald-300'
+                {/* RIGHT NODE */}
+                <div className={`relative z-10 p-2 sm:p-3.5 rounded-2xl border transition-all text-center space-y-1 ${
+                  serverHealth < 40 ? 'bg-rose-950/80 border-rose-500 text-rose-300 ring-2 ring-rose-500/40' : 'bg-slate-900 border-emerald-500/40 text-emerald-300'
                 }`}>
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto ${
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mx-auto ${
                     serverHealth < 40 ? 'bg-rose-900 text-white' : 'bg-emerald-950 text-emerald-400'
                   }`}>
-                    <Server className="w-5 h-5" />
+                    <Server className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold">
-                    {serverHealth < 40 ? 'Server Crashing' : 'Web Server'}
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold">
+                    {serverHealth < 40 ? 'Crashing' : 'Web Server'}
                   </div>
-                  <div className="text-[9px] font-mono">
+                  <div className="text-[8px] sm:text-[9px] font-mono">
                     {serverHealth < 40 ? 'HTTP 503' : '200 OK'}
                   </div>
                 </div>
@@ -513,35 +462,27 @@ export default function AttackVisualizerLab() {
             </div>
           )}
 
-          {/* =========================================================================
-              2. PHISHING ATTACK VISUALIZER
-              ========================================================================= */}
+          {/* 2. PHISHING VISUALIZER */}
           {selectedAttackId === 'phishing' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between text-xs font-mono">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs font-mono">
                 <span className="text-amber-400 font-bold">CREDENTIAL HARVESTING &amp; DOMAIN REPUTATION FILTER</span>
                 <span className={shieldActive ? 'text-blue-300 font-bold' : 'text-rose-400 font-bold'}>
                   {shieldActive ? '✓ FIDO2 WebAuthn Enforced' : '⚠️ Plaintext Credentials Stolen'}
                 </span>
               </div>
 
-              {/* Phishing Stage */}
-              <div className="relative h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-6 sm:px-12">
+              <div className="relative h-56 sm:h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-3 sm:px-8 lg:px-12">
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                  {/* Attacker to User line */}
                   <line x1="15%" y1="50%" x2="50%" y2="50%" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
-                  {/* User to C2 Server line */}
                   <line x1="50%" y1="50%" x2="85%" y2="50%" stroke={shieldActive ? '#3b82f6' : '#e11d48'} strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
                 </svg>
 
-                {/* Flowing credential packet */}
                 {isPlaying && (
                   <div
-                    className="absolute w-4 h-4 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 flex items-center justify-center text-[9px] text-white font-bold"
+                    className="absolute w-4 h-4 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 flex items-center justify-center text-[8px] text-white font-bold"
                     style={{
-                      left: shieldActive
-                        ? `${50 + (phishPacketProgress % 20) * 0.8}%` // Blocked at User Boundary
-                        : `${50 + (phishPacketProgress % 40) * 0.87}%`, // Reaches C2 server
+                      left: shieldActive ? `${50 + (phishPacketProgress % 20) * 0.8}%` : `${50 + (phishPacketProgress % 40) * 0.87}%`,
                       top: '50%',
                       opacity: shieldActive && (phishPacketProgress % 20) > 15 ? 0 : 1
                     }}
@@ -550,71 +491,60 @@ export default function AttackVisualizerLab() {
                   </div>
                 )}
 
-                {/* LEFT: ATTACKER LURE */}
-                <div className="relative z-10 p-3 rounded-2xl bg-slate-900 border border-amber-500/40 text-center space-y-1">
-                  <div className="w-10 h-10 rounded-xl bg-amber-950 text-amber-400 flex items-center justify-center mx-auto">
-                    <Mail className="w-5 h-5" />
+                <div className="relative z-10 p-2 sm:p-3 rounded-2xl bg-slate-900 border border-amber-500/40 text-center space-y-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-950 text-amber-400 flex items-center justify-center mx-auto">
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold text-amber-300">Spoofed Lure</div>
-                  <div className="text-[9px] text-slate-400 font-mono">your-c0mpany.co</div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold text-amber-300">Spoofed Lure</div>
+                  <div className="text-[8px] sm:text-[9px] text-slate-400 font-mono">your-c0mpany.co</div>
                 </div>
 
-                {/* MIDDLE: USER LOGIN FORM (WITH SHIELD BADGE IF ACTIVE) */}
-                <div className={`relative z-10 p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
-                  shieldActive
-                    ? 'bg-blue-950/80 border-blue-400 ring-8 ring-blue-500/20 text-blue-300 shadow-xl'
-                    : 'bg-slate-900 border-rose-500/50 text-rose-300'
+                <div className={`relative z-10 p-2.5 sm:p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
+                  shieldActive ? 'bg-blue-950/80 border-blue-400 ring-4 sm:ring-8 ring-blue-500/20 text-blue-300 shadow-xl' : 'bg-slate-900 border-rose-500/50 text-rose-300'
                 }`}>
-                  <User className="w-8 h-8 mx-auto mb-1" />
-                  <div className="text-xs font-mono font-bold">Victim Client</div>
-                  <div className="text-[10px] font-mono mt-1 px-2 py-0.5 rounded bg-black/40">
-                    {shieldActive ? '🛡️ Auth Shield Active' : 'user: victim@corp'}
+                  <User className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1" />
+                  <div className="text-[10px] sm:text-xs font-mono font-bold">Victim Client</div>
+                  <div className="text-[8px] sm:text-[10px] font-mono mt-1 px-1.5 py-0.5 rounded bg-black/40">
+                    {shieldActive ? '🛡️ Auth Shield' : 'user: victim@corp'}
                   </div>
                 </div>
 
-                {/* RIGHT: ATTACKER C2 REPOSITORY */}
-                <div className={`relative z-10 p-3 rounded-2xl border transition-all text-center space-y-1 ${
+                <div className={`relative z-10 p-2 sm:p-3 rounded-2xl border transition-all text-center space-y-1 ${
                   shieldActive ? 'bg-slate-900/60 border-slate-700 opacity-40 text-slate-500' : 'bg-rose-950 border-rose-500 text-rose-300 animate-pulse'
                 }`}>
-                  <div className="w-10 h-10 rounded-xl bg-black/40 text-rose-400 flex items-center justify-center mx-auto">
-                    <Key className="w-5 h-5" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-black/40 text-rose-400 flex items-center justify-center mx-auto">
+                    <Key className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold">Adversary C2</div>
-                  <div className="text-[9px] font-mono">
-                    {shieldActive ? '0 Creds Received' : 'Password Stolen!'}
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold">Adversary C2</div>
+                  <div className="text-[8px] sm:text-[9px] font-mono">
+                    {shieldActive ? '0 Creds' : 'Stolen!'}
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =========================================================================
-              3. SQL INJECTION (SQLi) VISUALIZER
-              ========================================================================= */}
+          {/* 3. SQL INJECTION VISUALIZER */}
           {selectedAttackId === 'sqli' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between text-xs font-mono">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs font-mono">
                 <span className="text-purple-400 font-bold">STAGE 4 DEEP PAYLOAD DPI &amp; PARAMETERIZATION</span>
                 <span className={shieldActive ? 'text-blue-300 font-bold' : 'text-rose-400 font-bold'}>
-                  {shieldActive ? '✓ Malicious Tautology Syntax Stripped' : '⚠️ User Table Auth Bypassed'}
+                  {shieldActive ? '✓ Tautology Syntax Stripped' : '⚠️ User Table Auth Bypassed'}
                 </span>
               </div>
 
-              {/* SQL Stage */}
-              <div className="relative h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-6 sm:px-12">
+              <div className="relative h-56 sm:h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-3 sm:px-8 lg:px-12">
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
                   <line x1="15%" y1="50%" x2="50%" y2="50%" stroke="#a855f7" strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
                   <line x1="50%" y1="50%" x2="85%" y2="50%" stroke={shieldActive ? '#3b82f6' : '#e11d48'} strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
                 </svg>
 
-                {/* Moving SQL payload packet */}
                 {isPlaying && (
                   <div
-                    className="absolute px-2 py-0.5 rounded bg-purple-600 text-white font-mono text-[9px] font-bold shadow-lg shadow-purple-600/50"
+                    className="absolute px-1.5 sm:px-2 py-0.5 rounded bg-purple-600 text-white font-mono text-[8px] sm:text-[9px] font-bold shadow-lg"
                     style={{
-                      left: shieldActive
-                        ? `${15 + (sqliPacketPos % 38) * 0.95}%` // Intercepted at Shield (50%)
-                        : `${15 + (sqliPacketPos % 72) * 0.95}%`, // Reaches DB
+                      left: shieldActive ? `${15 + (sqliPacketPos % 38) * 0.95}%` : `${15 + (sqliPacketPos % 72) * 0.95}%`,
                       top: '47%',
                       opacity: shieldActive && (sqliPacketPos % 38) > 34 ? 0 : 1
                     }}
@@ -623,69 +553,56 @@ export default function AttackVisualizerLab() {
                   </div>
                 )}
 
-                {/* LEFT: FORM INPUT */}
-                <div className="relative z-10 p-3 rounded-2xl bg-slate-900 border border-purple-500/40 text-center space-y-1">
-                  <div className="w-10 h-10 rounded-xl bg-purple-950 text-purple-400 flex items-center justify-center mx-auto">
-                    <Code className="w-5 h-5" />
+                <div className="relative z-10 p-2 sm:p-3 rounded-2xl bg-slate-900 border border-purple-500/40 text-center space-y-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-950 text-purple-400 flex items-center justify-center mx-auto">
+                    <Code className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold text-purple-300">Auth Login Field</div>
-                  <div className="text-[9px] text-slate-400 font-mono">POST /api/auth</div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold text-purple-300">Auth Input</div>
+                  <div className="text-[8px] sm:text-[9px] text-slate-400 font-mono">POST /auth</div>
                 </div>
 
-                {/* MIDDLE: STAGE 4 PAYLOAD INSPECTOR */}
-                <div className={`relative z-10 p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
-                  shieldActive
-                    ? 'bg-blue-950/80 border-blue-400 ring-8 ring-blue-500/20 text-blue-300 shadow-xl'
-                    : 'bg-slate-900 border-slate-700 opacity-40 text-slate-500'
+                <div className={`relative z-10 p-2.5 sm:p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
+                  shieldActive ? 'bg-blue-950/80 border-blue-400 ring-4 sm:ring-8 ring-blue-500/20 text-blue-300 shadow-xl' : 'bg-slate-900 border-slate-700 opacity-40 text-slate-500'
                 }`}>
-                  <Shield className="w-8 h-8 mx-auto" />
-                  <div className="text-xs font-mono font-bold mt-1">Stage 4 DPI Filter</div>
-                  <div className="text-[9px] font-mono mt-1 text-blue-300">
-                    {shieldActive ? 'Regex [SIG-SQLI] Match' : 'Bypass'}
-                  </div>
+                  <Shield className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
+                  <div className="text-[10px] sm:text-xs font-mono font-bold mt-1">Stage 4 DPI</div>
+                  <div className="text-[8px] sm:text-[9px] font-mono text-blue-300">{shieldActive ? 'SIG-SQLI Match' : 'Bypass'}</div>
                 </div>
 
-                {/* RIGHT: DATABASE CORE */}
-                <div className={`relative z-10 p-3 rounded-2xl border transition-all text-center space-y-1 ${
+                <div className={`relative z-10 p-2 sm:p-3 rounded-2xl border transition-all text-center space-y-1 ${
                   shieldActive ? 'bg-slate-900 border-emerald-500/40 text-emerald-300' : 'bg-rose-950 border-rose-500 text-rose-300 animate-pulse'
                 }`}>
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto ${
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mx-auto ${
                     shieldActive ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-900 text-white'
                   }`}>
-                    <Database className="w-5 h-5" />
+                    <Database className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold">SQL Database</div>
-                  <div className="text-[9px] font-mono">
-                    {shieldActive ? '✓ Query Safe' : 'Table Dumped!'}
-                  </div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold">SQL Database</div>
+                  <div className="text-[8px] sm:text-[9px] font-mono">{shieldActive ? '✓ Safe' : 'Dumped!'}</div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =========================================================================
-              4. MAN-IN-THE-MIDDLE (MITM) VISUALIZER
-              ========================================================================= */}
+          {/* 4. MITM VISUALIZER */}
           {selectedAttackId === 'mitm' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between text-xs font-mono">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs font-mono">
                 <span className="text-blue-400 font-bold">TLS 1.3 CERTIFICATE PINNING &amp; ENCRYPTED TUNNEL</span>
                 <span className={shieldActive ? 'text-blue-300 font-bold' : 'text-rose-400 font-bold'}>
-                  {shieldActive ? '✓ Encrypted Tunnel Active' : '⚠️ Payload Tampered in Flight'}
+                  {shieldActive ? '✓ Encrypted Tunnel Active' : '⚠️ Tampered in Flight'}
                 </span>
               </div>
 
-              {/* MitM Stage */}
-              <div className="relative h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-6 sm:px-12">
+              <div className="relative h-56 sm:h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-3 sm:px-8 lg:px-12">
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
                   <line x1="15%" y1="50%" x2="50%" y2="50%" stroke={shieldActive ? '#3b82f6' : '#e11d48'} strokeWidth="3" opacity="0.7" />
                   <line x1="50%" y1="50%" x2="85%" y2="50%" stroke={shieldActive ? '#3b82f6' : '#e11d48'} strokeWidth="3" opacity="0.7" />
                 </svg>
 
-                {/* Packet moving between Client and Bank */}
                 {isPlaying && (
                   <div
-                    className={`absolute px-2 py-0.5 rounded text-white font-mono text-[9px] font-bold shadow-lg ${
+                    className={`absolute px-1.5 sm:px-2 py-0.5 rounded text-white font-mono text-[8px] sm:text-[9px] font-bold shadow-lg ${
                       shieldActive ? 'bg-blue-600 shadow-blue-500/50' : 'bg-rose-600 shadow-rose-500/50'
                     }`}
                     style={{
@@ -693,83 +610,69 @@ export default function AttackVisualizerLab() {
                       top: '47%'
                     }}
                   >
-                    {shieldActive ? '🔒 TLS Encrypted: $500' : (mitmPacketPos > 50 ? '⚠️ Altered: $5000' : 'Plaintext: $500')}
+                    {shieldActive ? '🔒 TLS: $500' : (mitmPacketPos > 50 ? '⚠️ Altered: $5000' : '$500')}
                   </div>
                 )}
 
-                {/* CLIENT A */}
-                <div className="relative z-10 p-3 rounded-2xl bg-slate-900 border border-blue-500/40 text-center space-y-1">
-                  <div className="w-10 h-10 rounded-xl bg-blue-950 text-blue-400 flex items-center justify-center mx-auto">
-                    <User className="w-5 h-5" />
+                <div className="relative z-10 p-2 sm:p-3 rounded-2xl bg-slate-900 border border-blue-500/40 text-center space-y-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-950 text-blue-400 flex items-center justify-center mx-auto">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold text-white">Client Node A</div>
-                  <div className="text-[9px] text-slate-400 font-mono">Transfer $500</div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold text-white">Client Node</div>
+                  <div className="text-[8px] sm:text-[9px] text-slate-400 font-mono">$500 Transfer</div>
                 </div>
 
-                {/* MIDDLE: ROGUE PROXY / MITM EAVESDROPPER */}
-                <div className={`relative z-10 p-3.5 rounded-3xl border-2 transition-all duration-300 text-center ${
-                  shieldActive
-                    ? 'bg-slate-900/60 border-slate-700 opacity-40 text-slate-500'
-                    : 'bg-rose-950/80 border-rose-500 text-rose-300 ring-8 ring-rose-500/20 animate-pulse'
+                <div className={`relative z-10 p-2.5 sm:p-3.5 rounded-3xl border-2 transition-all text-center ${
+                  shieldActive ? 'bg-slate-900/60 border-slate-700 opacity-40 text-slate-500' : 'bg-rose-950/80 border-rose-500 text-rose-300 ring-4 sm:ring-8 ring-rose-500/20'
                 }`}>
-                  <Share2 className="w-8 h-8 mx-auto" />
-                  <div className="text-xs font-mono font-bold mt-1">Rogue MitM Proxy</div>
-                  <div className="text-[9px] font-mono mt-1">
-                    {shieldActive ? 'Blocked by TLS Pinning' : 'Intercepting & Altering'}
-                  </div>
+                  <Share2 className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
+                  <div className="text-[10px] sm:text-xs font-mono font-bold mt-1">MitM Proxy</div>
+                  <div className="text-[8px] sm:text-[9px] font-mono">{shieldActive ? 'Blocked' : 'Tampering'}</div>
                 </div>
 
-                {/* RIGHT: BANKING GATEWAY */}
-                <div className={`relative z-10 p-3 rounded-2xl border transition-all text-center space-y-1 ${
+                <div className={`relative z-10 p-2 sm:p-3 rounded-2xl border transition-all text-center space-y-1 ${
                   shieldActive ? 'bg-slate-900 border-emerald-500/40 text-emerald-300' : 'bg-rose-950 border-rose-500 text-rose-300'
                 }`}>
-                  <div className="w-10 h-10 rounded-xl bg-black/40 text-emerald-400 flex items-center justify-center mx-auto">
-                    <Server className="w-5 h-5" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-black/40 text-emerald-400 flex items-center justify-center mx-auto">
+                    <Server className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold">Banking Server</div>
-                  <div className="text-[9px] font-mono">
-                    {shieldActive ? '✓ Verified $500' : '⚠️ Charged $5000!'}
-                  </div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold">Banking API</div>
+                  <div className="text-[8px] sm:text-[9px] font-mono">{shieldActive ? '✓ Verified' : '⚠️ Exploited'}</div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =========================================================================
-              5. RANSOMWARE LATERAL WORM VISUALIZER
-              ========================================================================= */}
+          {/* 5. RANSOMWARE VISUALIZER */}
           {selectedAttackId === 'ransomware' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between text-xs font-mono">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs font-mono">
                 <span className="text-rose-400 font-bold">AUTOMATED ZERO-TRUST MICRO-SEGMENTATION</span>
                 <span className={shieldActive ? 'text-blue-300 font-bold' : 'text-rose-400 font-bold'}>
-                  {shieldActive ? '✓ Patient 0 Quarantined Instantly' : '⚠️ Entire Subnet Encrypted (.locked)'}
+                  {shieldActive ? '✓ Patient 0 Quarantined' : '⚠️ Subnet Encrypted (.locked)'}
                 </span>
               </div>
 
-              {/* Grid Node Graph */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 py-2">
                 {ransomwareNodes.map((node) => (
                   <div
                     key={node.id}
-                    className={`p-4 rounded-2xl border text-center space-y-2 transition-all duration-300 ${
+                    className={`p-3 sm:p-4 rounded-2xl border text-center space-y-2 transition-all ${
                       node.infected
                         ? (node.isolated
-                            ? 'bg-blue-950/80 border-blue-500 text-blue-300 ring-4 ring-blue-500/30'
-                            : 'bg-rose-950/80 border-rose-500 text-rose-300 ring-4 ring-rose-500/30 animate-pulse')
+                            ? 'bg-blue-950/80 border-blue-500 text-blue-300 ring-2 ring-blue-500/30'
+                            : 'bg-rose-950/80 border-rose-500 text-rose-300 ring-2 ring-rose-500/30 animate-pulse')
                         : 'bg-slate-900 border-emerald-500/40 text-emerald-300'
                     }`}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-black/40 flex items-center justify-center mx-auto">
-                      {node.infected ? <Lock className="w-5 h-5 text-rose-400" /> : <HardDrive className="w-5 h-5 text-emerald-400" />}
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-black/40 flex items-center justify-center mx-auto">
+                      {node.infected ? <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-rose-400" /> : <HardDrive className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />}
                     </div>
-                    <div className="text-xs font-mono font-bold">{node.name}</div>
-                    <div className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${
-                      node.infected
-                        ? (node.isolated ? 'bg-blue-900 text-blue-300' : 'bg-rose-900 text-white')
-                        : 'bg-emerald-950 text-emerald-400'
+                    <div className="text-[10px] sm:text-xs font-mono font-bold truncate">{node.name}</div>
+                    <div className={`text-[8px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
+                      node.infected ? (node.isolated ? 'bg-blue-900 text-blue-300' : 'bg-rose-900 text-white') : 'bg-emerald-950 text-emerald-400'
                     }`}>
-                      {node.infected ? (node.isolated ? 'QUARANTINED' : 'ENCRYPTED .LOCKED') : 'HEALTHY & SAFE'}
+                      {node.infected ? (node.isolated ? 'QUARANTINE' : 'LOCKED') : 'HEALTHY'}
                     </div>
                   </div>
                 ))}
@@ -777,119 +680,106 @@ export default function AttackVisualizerLab() {
             </div>
           )}
 
-          {/* =========================================================================
-              6. CROSS-SITE SCRIPTING (XSS) VISUALIZER
-              ========================================================================= */}
+          {/* 6. XSS VISUALIZER */}
           {selectedAttackId === 'xss' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between text-xs font-mono">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs font-mono">
                 <span className="text-sky-400 font-bold">CONTENT SECURITY POLICY (CSP) &amp; DOM SANITIZATION</span>
                 <span className={shieldActive ? 'text-blue-300 font-bold' : 'text-rose-400 font-bold'}>
-                  {shieldActive ? '✓ Inline Script Execution Refused' : '⚠️ Cookie Exfiltrated to External Gateway'}
+                  {shieldActive ? '✓ Inline Script Refused' : '⚠️ Exfiltrated via DOM'}
                 </span>
               </div>
 
-              {/* XSS Stage */}
-              <div className="relative h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-6 sm:px-12">
+              <div className="relative h-56 sm:h-64 w-full bg-slate-950/80 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-between px-3 sm:px-8 lg:px-12">
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
                   <line x1="15%" y1="50%" x2="50%" y2="50%" stroke="#0284c7" strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
                   <line x1="50%" y1="50%" x2="85%" y2="50%" stroke={shieldActive ? '#3b82f6' : '#e11d48'} strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
                 </svg>
 
-                {/* Moving script packet */}
                 {isPlaying && (
                   <div
-                    className={`absolute px-2 py-0.5 rounded text-white font-mono text-[9px] font-bold shadow-lg ${
+                    className={`absolute px-1.5 sm:px-2 py-0.5 rounded text-white font-mono text-[8px] sm:text-[9px] font-bold shadow-lg ${
                       shieldActive ? 'bg-blue-600' : 'bg-rose-600'
                     }`}
                     style={{
-                      left: shieldActive
-                        ? `${50 + (xssProgress % 20) * 0.8}%`
-                        : `${50 + (xssProgress % 38) * 0.95}%`,
+                      left: shieldActive ? `${50 + (xssProgress % 20) * 0.8}%` : `${50 + (xssProgress % 38) * 0.95}%`,
                       top: '47%',
                       opacity: shieldActive && (xssProgress % 20) > 15 ? 0 : 1
                     }}
                   >
-                    {shieldActive ? '🛡️ CSP Blocked' : 'document.cookie'}
+                    {shieldActive ? '🛡️ CSP Block' : 'cookie'}
                   </div>
                 )}
 
-                {/* LEFT: COMMENT FORM */}
-                <div className="relative z-10 p-3 rounded-2xl bg-slate-900 border border-sky-500/40 text-center space-y-1">
-                  <div className="w-10 h-10 rounded-xl bg-sky-950 text-sky-400 flex items-center justify-center mx-auto">
-                    <Code className="w-5 h-5" />
+                <div className="relative z-10 p-2 sm:p-3 rounded-2xl bg-slate-900 border border-sky-500/40 text-center space-y-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-sky-950 text-sky-400 flex items-center justify-center mx-auto">
+                    <Code className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold text-sky-300">Comment Form</div>
-                  <div className="text-[9px] text-slate-400 font-mono">&lt;script&gt;</div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold text-sky-300">Comment Form</div>
+                  <div className="text-[8px] sm:text-[9px] text-slate-400 font-mono">&lt;script&gt;</div>
                 </div>
 
-                {/* MIDDLE: VICTIM BROWSER DOM */}
-                <div className={`relative z-10 p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
-                  shieldActive
-                    ? 'bg-blue-950/80 border-blue-400 ring-8 ring-blue-500/20 text-blue-300 shadow-xl'
-                    : 'bg-slate-900 border-rose-500 text-rose-300'
+                <div className={`relative z-10 p-2.5 sm:p-4 rounded-3xl border-2 transition-all duration-300 text-center ${
+                  shieldActive ? 'bg-blue-950/80 border-blue-400 ring-4 sm:ring-8 ring-blue-500/20 text-blue-300 shadow-xl' : 'bg-slate-900 border-rose-500 text-rose-300'
                 }`}>
-                  <Globe className="w-8 h-8 mx-auto mb-1" />
-                  <div className="text-xs font-mono font-bold">Victim Browser</div>
-                  <div className="text-[10px] font-mono mt-1 px-2 py-0.5 rounded bg-black/40">
-                    {shieldActive ? 'CSP: script-src self' : 'Script Executing!'}
+                  <Globe className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1" />
+                  <div className="text-[10px] sm:text-xs font-mono font-bold">Victim Browser</div>
+                  <div className="text-[8px] sm:text-[10px] font-mono mt-1 px-1.5 py-0.5 rounded bg-black/40">
+                    {shieldActive ? 'CSP Enforced' : 'Script Running!'}
                   </div>
                 </div>
 
-                {/* RIGHT: ATTACKER LISTENER */}
-                <div className={`relative z-10 p-3 rounded-2xl border transition-all text-center space-y-1 ${
+                <div className={`relative z-10 p-2 sm:p-3 rounded-2xl border transition-all text-center space-y-1 ${
                   shieldActive ? 'bg-slate-900/60 border-slate-700 opacity-40 text-slate-500' : 'bg-rose-950 border-rose-500 text-rose-300 animate-pulse'
                 }`}>
-                  <div className="w-10 h-10 rounded-xl bg-black/40 text-rose-400 flex items-center justify-center mx-auto">
-                    <Bot className="w-5 h-5" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-black/40 text-rose-400 flex items-center justify-center mx-auto">
+                    <Bot className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className="text-[11px] font-mono font-bold">Attacker Listener</div>
-                  <div className="text-[9px] font-mono">
-                    {shieldActive ? '0 Cookies Stolen' : 'Session Token Exfiltrated!'}
-                  </div>
+                  <div className="text-[10px] sm:text-[11px] font-mono font-bold">Attacker</div>
+                  <div className="text-[8px] sm:text-[9px] font-mono">{shieldActive ? '0 Exfiltrated' : 'Token Stolen!'}</div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Real-Time Telemetry Bar at bottom of canvas */}
-          <div className="pt-4 mt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between text-xs font-mono text-slate-400">
+          {/* Telemetry Bar */}
+          <div className="pt-3 sm:pt-4 mt-3 sm:mt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs font-mono text-slate-400">
             <span>Adaptive Engine: <strong className="text-blue-400">Continuous Evaluation</strong></span>
-            <span>Active Status: <strong className={shieldActive ? 'text-emerald-400' : 'text-rose-400'}>
+            <span>Status: <strong className={shieldActive ? 'text-emerald-400' : 'text-rose-400'}>
               {shieldActive ? 'DEFENSE ENFORCING' : 'FIREWALL BYPASSED'}
             </strong></span>
           </div>
         </div>
 
-        {/* Technical Breakdown Cards (How it Works, Real-World Impact, Mitigation) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 text-xs">
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-            <h4 className="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
-              <Sparkles className="w-4 h-4 text-blue-600" /> How The Attack Works
+        {/* Technical Breakdown Responsive Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pt-2 text-xs">
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <h4 className="font-bold text-gray-900 flex items-center gap-1.5 text-xs sm:text-sm">
+              <Sparkles className="w-4 h-4 text-blue-600 shrink-0" /> How The Attack Works
             </h4>
-            <ul className="space-y-1.5 text-gray-600 pl-4 list-disc leading-relaxed">
+            <ul className="space-y-1.5 text-gray-600 pl-4 list-disc leading-relaxed text-[11px] sm:text-xs">
               {activeAttack.howItWorks.map((step, i) => (
                 <li key={i}>{step}</li>
               ))}
             </ul>
           </div>
 
-          <div className="p-5 rounded-2xl bg-rose-50/50 border border-rose-200 space-y-2">
-            <h4 className="font-bold text-rose-900 flex items-center gap-1.5 text-sm">
-              <ShieldAlert className="w-4 h-4 text-rose-600" /> Real-World Impact
+          <div className="p-4 sm:p-5 rounded-2xl bg-rose-50/50 border border-rose-200 space-y-2">
+            <h4 className="font-bold text-rose-900 flex items-center gap-1.5 text-xs sm:text-sm">
+              <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" /> Real-World Impact
             </h4>
-            <p className="text-gray-700 leading-relaxed">{activeAttack.realWorldImpact}</p>
-            <div className="pt-2 text-[11px] font-mono text-rose-800">
+            <p className="text-gray-700 leading-relaxed text-[11px] sm:text-xs">{activeAttack.realWorldImpact}</p>
+            <div className="pt-2 text-[10px] sm:text-[11px] font-mono text-rose-800">
               <strong>Ref:</strong> {activeAttack.cveExample}
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-2">
-            <h4 className="font-bold text-blue-900 flex items-center gap-1.5 text-sm">
-              <ShieldCheck className="w-4 h-4 text-blue-600" /> AdaptiveShield Mitigation
+          <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-2">
+            <h4 className="font-bold text-blue-900 flex items-center gap-1.5 text-xs sm:text-sm">
+              <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" /> AdaptiveShield Mitigation
             </h4>
-            <p className="text-gray-700 leading-relaxed">{activeAttack.mitigation}</p>
-            <div className="pt-2 text-[11px] font-mono text-blue-700 font-semibold">
+            <p className="text-gray-700 leading-relaxed text-[11px] sm:text-xs">{activeAttack.mitigation}</p>
+            <div className="pt-2 text-[10px] sm:text-[11px] font-mono text-blue-700 font-semibold">
               ✓ Automated 5-Stage Policy Enforced
             </div>
           </div>
