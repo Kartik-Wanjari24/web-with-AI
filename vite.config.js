@@ -10,6 +10,7 @@ export default defineConfig({
   ],
   server: {
     port: 5173,
+    strictPort: true, // Prevents Vite from switching to 5174 if 5173 is temporarily busy
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
