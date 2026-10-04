@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import AntigravityCanvas from './components/AntigravityCanvas';
 import Navbar from './components/Navbar';
+import AuthModal from './components/AuthModal';
+import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import FirewallPage from './pages/FirewallPage';
 import KnowledgeBasePage from './pages/KnowledgeBasePage';
@@ -228,6 +230,7 @@ export function generatePacket(override = {}) {
    ========================================================================== */
 export default function App() {
   const [activePage, setActivePage] = useState('home');
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   // ── Pipeline rules ──────────────────────────────────────────────────────
   const [rules, setRules] = useState(INITIAL_RULES);
@@ -310,26 +313,37 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen text-slate-100 flex flex-col font-['Inter',sans-serif] selection:bg-blue-600 selection:text-white">
-      <AntigravityCanvas />
-      <Navbar activePage={activePage} onNavigate={setActivePage} />
+    <AuthProvider>
+      <div className="relative min-h-screen text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+        <AntigravityCanvas />
+        <Navbar
+          activePage={activePage}
+          onNavigate={setActivePage}
+          onOpenAuth={() => setAuthModalOpen(true)}
+        />
 
-      <main className="relative z-10 flex-1">
-        {activePage === 'home'        && <HomePage       {...pipelineProps} onNavigate={setActivePage} />}
-        {activePage === 'firewall'    && <FirewallPage />}
-        {activePage === 'knowledge'   && <KnowledgeBasePage />}
-        {activePage === 'simulations' && <SimulationsPage {...pipelineProps} />}
-        {activePage === 'techstack'   && <TechStackPage />}
-      </main>
+        <main className="relative z-10 flex-1">
+          {activePage === 'home'        && <HomePage       {...pipelineProps} onNavigate={setActivePage} />}
+          {activePage === 'firewall'    && <FirewallPage />}
+          {activePage === 'knowledge'   && <KnowledgeBasePage />}
+          {activePage === 'simulations' && <SimulationsPage {...pipelineProps} />}
+          {activePage === 'techstack'   && <TechStackPage />}
+        </main>
 
-      <footer className="relative z-10 border-t border-slate-800/80 bg-slate-950/90 px-4 sm:px-6 lg:px-12 py-5 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-3 font-mono">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-200 font-medium">AdaptiveShield Autonomous Network Firewall</span>
-        </div>
-        <div>
-          Engine Status: <strong className="text-emerald-400 font-semibold">5/5 PIPELINE STAGES OPERATIONAL</strong>
-        </div>
-      </footer>
-    </div>
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+        />
+
+        <footer className="relative z-10 border-t border-slate-700/80 bg-[#050811]/90 px-4 sm:px-6 lg:px-12 py-5 text-xs text-slate-300 flex flex-wrap items-center justify-between gap-3 font-mono">
+          <div className="flex items-center gap-2">
+            <span className="text-white font-semibold">AdaptiveShield Autonomous Network Firewall</span>
+          </div>
+          <div>
+            Engine Status: <strong className="text-emerald-400 font-semibold">5/5 PIPELINE STAGES OPERATIONAL</strong>
+          </div>
+        </footer>
+      </div>
+    </AuthProvider>
   );
 }
