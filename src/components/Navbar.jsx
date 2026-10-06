@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Home, BookOpen, Crosshair, Cpu, Menu, X, User, LogOut, CheckCircle, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import ExtensionStatusBadge from './ExtensionStatusBadge';
 
 const NAV_LINKS = [
   { id: 'home',        label: 'Home',                  icon: Home },
@@ -10,7 +11,7 @@ const NAV_LINKS = [
   { id: 'techstack',   label: 'About & Tech Stack',    icon: Cpu },
 ];
 
-export default function Navbar({ activePage, onNavigate, onOpenAuth }) {
+export default function Navbar({ activePage, onNavigate, onOpenAuth, extConnected = false, extEventCount = 0, extScannedCount = 0 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
@@ -71,6 +72,9 @@ export default function Navbar({ activePage, onNavigate, onOpenAuth }) {
             );
           })}
         </nav>
+
+        {/* Extension status badge */}
+        <ExtensionStatusBadge isConnected={extConnected} eventCount={extEventCount} scannedCount={extScannedCount} />
 
         {/* Right side: Auth Status & Mobile Menu */}
         <div className="flex items-center gap-3">

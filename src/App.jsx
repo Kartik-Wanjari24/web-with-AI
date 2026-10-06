@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import AntigravityCanvas from './components/AntigravityCanvas';
 import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
@@ -8,6 +8,7 @@ import FirewallPage from './pages/FirewallPage';
 import KnowledgeBasePage from './pages/KnowledgeBasePage';
 import SimulationsPage from './pages/SimulationsPage';
 import TechStackPage from './pages/TechStackPage';
+import { useExtensionBridge } from './hooks/useExtensionBridge';
 
 /* ==========================================================================
    5-STAGE OOP RULE PIPELINE ENGINE
@@ -253,6 +254,38 @@ export default function App() {
     { time: '00:25', allowed: 35, blocked: 9, threatScore: 60 },
   ]);
 
+  // ── Chrome Extension bridge ───────────────────────────────────────────────
+  // Called whenever the extension detects a risky site in real time.
+  const handleExtensionDetection = useCallback((decision) => {
+    // Inject extension detections into the same packets stream so they appear
+    // in the live table, chart, and stats just like pipeline-processed packets.
+    setStats(prev => ({
+      total:           prev.total + 1,
+      allowed:         prev.allowed,           // extension events are always blocks
+      blocked:         prev.blocked + 1,
+      threatsDetected: prev.threatsDetected + 1,
+      autoBans:        prev.autoBans,
+    }));
+    setPackets(prev => [decision, ...prev.slice(0, 99)]);
+  }, []);
+
+  const { isConnected: extConnected, extensionEvents, scannedCount: extScannedCount, clearEvents: clearExtEvents } =
+    useExtensionBridge({ onNewDetection: handleExtensionDetection });
+
+  // Seed existing extension events into packets on first connect (one-shot)
+  const extSeededRef = useRef(false);
+  useEffect(() => {
+    if (!extConnected || extSeededRef.current || extensionEvents.length === 0) return;
+    extSeededRef.current = true;
+    setPackets(prev => [...extensionEvents, ...prev].slice(0, 100));
+    setStats(prev => ({
+      ...prev,
+      total:           prev.total + extensionEvents.length,
+      blocked:         prev.blocked + extensionEvents.length,
+      threatsDetected: prev.threatsDetected + extensionEvents.length,
+    }));
+  }, [extConnected, extensionEvents]);
+
   // ── Ref closure so pipeline never stale-closes over rules ────────────────
   const rulesRef = useRef(rules);
   rulesRef.current = rules;
@@ -320,10 +353,13 @@ export default function App() {
           activePage={activePage}
           onNavigate={setActivePage}
           onOpenAuth={() => setAuthModalOpen(true)}
+          extConnected={extConnected}
+          extEventCount={extensionEvents.length}
+          extScannedCount={extScannedCount}
         />
 
         <main className="relative z-10 flex-1">
-          {activePage === 'home'        && <HomePage       {...pipelineProps} onNavigate={setActivePage} />}
+          {activePage === 'home'        && <HomePage       {...pipelineProps} onNavigate={setActivePage} extConnected={extConnected} extScannedCount={extScannedCount} extEventCount={extensionEvents.length} />}
           {activePage === 'firewall'    && <FirewallPage />}
           {activePage === 'knowledge'   && <KnowledgeBasePage />}
           {activePage === 'simulations' && <SimulationsPage {...pipelineProps} />}

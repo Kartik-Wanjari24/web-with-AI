@@ -7,8 +7,10 @@
     "dev": "vite",
     "server": "node server/index.js",
     "dev:all": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"npm run server\" \"npm run dev\"",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build && node scripts/build-extension-zip.mjs",
+    "preview": "vite preview",
+    "gen:icons": "node scripts/generate-icons.mjs",
+    "build:zip": "node scripts/build-extension-zip.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",

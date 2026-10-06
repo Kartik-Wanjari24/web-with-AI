@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AdaptiveShield</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 360px;
+      max-height: 580px;
+      overflow-y: auto;
+      background: #050811;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+    }
+    .header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px;
+      background: #0b0f19;
+      border-bottom: 1px solid #1e293b;
+    }
+    .logo {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+    .title    { font-weight: 800; color: #fff; font-size: 14px; }
+    .subtitle { font-size: 10px; color: #64748b; margin-top: 1px; }
+    .badge {
+      margin-left: auto; font-size: 9px; font-weight: 700;
+      padding: 3px 8px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+    }
+    .badge.active  { background:#052e16; color:#34d399; border:1px solid #166534; }
+    .badge.loading { background:#1c1917; color:#a8a29e; border:1px solid #44403c; }
+
+    .section       { padding: 12px 16px; }
+    .section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; margin-bottom: 8px; }
+
+    .stat-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .stat     { flex:1; background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:8px 10px; text-align:center; }
+    .stat-val { font-size: 20px; font-weight: 800; font-family: monospace; }
+    .stat-lbl { font-size: 9px; color: #64748b; margin-top: 2px; }
+    .blue  { color: #60a5fa; }
+    .rose  { color: #fb7185; }
+    .amber { color: #fbbf24; }
+
+    .event-list { max-height: 340px; overflow-y: auto; }
+
+    .event-card {
+      background: #0f172a; border: 1px solid #1e293b; border-radius: 9px;
+      margin-bottom: 7px; overflow: hidden;
+    }
+    .event-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; cursor: default;
+    }
+    .event-icon  { font-size: 15px; flex-shrink: 0; }
+    .event-meta  { flex: 1; min-width: 0; }
+    .event-host  { font-size: 11px; font-weight: 700; color: #e2e8f0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .event-time  { font-size: 9px; color: #475569; }
+    .event-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+    .badge-CRITICAL { background:#4c0519; color:#fda4af; }
+    .badge-HIGH     { background:#431407; color:#fed7aa; }
+    .badge-MEDIUM   { background:#172554; color:#93c5fd; }
+    .badge-LOW      { background:#052e16; color:#86efac; }
+
+    .event-detail { padding: 0 10px 10px; }
+
+    .explanation {
+      margin-top: 6px;
+      padding: 8px 10px;
+      background: rgba(239,68,68,0.06);
+      border-left: 2px solid #dc2626;
+      border-radius: 0 5px 5px 0;
+    }
+    .explanation.hidden { display: none; }
+    .ex-what   { font-size: 10px; font-weight: 700; color: #fca5a5; margin-bottom: 4px; }
+    .ex-why    { font-size: 10px; color: #fecaca; line-height: 1.5; margin-bottom: 4px; }
+    .ex-action { font-size: 10px; color: #86efac; font-weight: 600; }
+
+    .show-more-btn {
+      display: inline-block; margin-top: 5px; font-size: 10px; color: #60a5fa;
+      background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline;
+    }
+    .empty { text-align:center; color:#334155; padding:20px 0; font-size:11px; }
+
+    .footer {
+      padding: 10px 16px; border-top: 1px solid #1e293b;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .open-btn  { font-size: 11px; font-weight: 600; color: #60a5fa; background: none; border: none; cursor: pointer; text-decoration: underline; }
+    .clear-btn { font-size: 11px; color: #475569; background: none; border: none; cursor: pointer; }
+    .clear-btn:hover { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🛡️</div>
+    <div>
+      <div class="title">AdaptiveShield</div>
+      <div class="subtitle">Real-Time Web Guard · v2.0</div>
+    </div>
+    <span class="badge loading" id="statusBadge">Loading…</span>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Session Summary</div>
+    <div class="stat-row">
+      <div class="stat"><div class="stat-val blue"  id="totalCount">0</div><div class="stat-lbl">Scanned</div></div>
+      <div class="stat"><div class="stat-val rose"  id="flaggedCount">0</div><div class="stat-lbl">Flagged</div></div>
+      <div class="stat"><div class="stat-val amber" id="critCount">0</div><div class="stat-lbl">Critical</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="section-label">Recent Detections</div>
+    <div class="event-list" id="eventList">
+      <div class="empty">No threats detected yet — browsing securely.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="open-btn"  id="openDashboard">Open Dashboard ↗</button>
+    <button class="clear-btn" id="clearBtn">Clear log</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

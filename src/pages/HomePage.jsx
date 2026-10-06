@@ -6,6 +6,7 @@ import {
   TrendingUp, Clock, Users, Bot
 } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
+import ExtensionInstallCenter from '../components/ExtensionInstallCenter';
 
 const MINI_CHART_DATA = [
   { v: 12, b: 2 }, { v: 19, b: 5 }, { v: 25, b: 1 }, { v: 32, b: 8 },
@@ -125,7 +126,7 @@ const colorMap = {
   sky:     { bg: 'bg-sky-600/10',    border: 'border-sky-500/30',    text: 'text-sky-400',    icon: 'bg-sky-600/20 text-sky-400',    btn: 'bg-sky-600 hover:bg-sky-500 text-white' },
 };
 
-export default function HomePage({ stats, packets, trafficChartData, onNavigate }) {
+export default function HomePage({ stats, packets, trafficChartData, onNavigate, extConnected, extScannedCount, extEventCount }) {
   const [tick, setTick] = useState(0);
   useEffect(() => {
     const id = setInterval(() => setTick(t => t + 1), 1000);
@@ -272,6 +273,13 @@ export default function HomePage({ stats, packets, trafficChartData, onNavigate 
           </div>
         </div>
       </section>
+
+      {/* ── EXTENSION INSTALL CENTER ─────────────────────────────────────────── */}
+      <ExtensionInstallCenter
+        isConnected={extConnected}
+        scannedCount={extScannedCount}
+        flaggedCount={extEventCount}
+      />
 
       {/* ── FEATURES GRID ────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 lg:px-12 py-16 bg-slate-950/40">
